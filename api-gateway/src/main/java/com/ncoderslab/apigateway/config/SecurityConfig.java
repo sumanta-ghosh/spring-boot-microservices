@@ -8,9 +8,21 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+    private final String[] freeResourceUrls = {
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/api-docs/**",
+            "/aggregate/**",
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests(authorizer -> authorizer.anyRequest().authenticated())
+        return httpSecurity.authorizeHttpRequests(
+                        authorizer -> authorizer.requestMatchers(freeResourceUrls).permitAll()
+                                .anyRequest().authenticated()
+                )
                 .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
                 .build();
     }
